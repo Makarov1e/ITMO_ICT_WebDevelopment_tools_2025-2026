@@ -1,0 +1,16 @@
+site_name: ЛР1 — FastAPI Hackathon API
+site_description: Отчёт по лабораторной работе 1 (FastAPI + SQLModel + PostgreSQL + Alembic + ручной JWT)
+repo_url: https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026
+repo_name: ITMO_ICT_WebDevelopment_tools_2025-2026
+docs_dir: docs
+
+theme:
+  name: readthedocs
+  highlightjs: true
+
+nav:
+  - Главная: index.md
+  - Установка и соединение с БД: setup.md
+  - Модели (ORM): models.md
+  - Безопасность (JWT вручную): security.md
+  - Эндпоинты API: endpoints.md

@@ -1,0 +1,7 @@
+fastapi>=0.110
+uvicorn[standard]>=0.27
+sqlmodel>=0.0.16
+psycopg2-binary>=2.9
+alembic>=1.13
+pydantic-settings>=2.1
+python-dotenv>=1.0
