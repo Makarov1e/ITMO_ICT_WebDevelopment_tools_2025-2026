@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Модели (ORM) - ЛР1 — FastAPI Hackathon API</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u041c\u043e\u0434\u0435\u043b\u0438 (ORM)";
+        var mkdocs_page_input_path = "models.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ЛР1 — FastAPI Hackathon API
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Главная</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../setup/">Установка и соединение с БД</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Модели (ORM)</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#_1">Связи между сущностями</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#appmodelsuserpy">app/models/user.py</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#appmodelstaskpy">app/models/task.py</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#appmodelsteampy">app/models/team.py</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#appmodelssolutionpy">app/models/solution.py</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../security/">Безопасность (JWT вручную)</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../endpoints/">Эндпоинты API</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ЛР1 — FastAPI Hackathon API</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Модели (ORM)</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/edit/master/docs/models.md">Edit on ITMO_ICT_WebDevelopment_tools_2025-2026</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="orm-sqlmodel">Модели (ORM SQLModel)</h1>
+<p>Все таблицы описаны через SQLModel и хранятся в PostgreSQL. Исходники:
+<a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/tree/main/lab1/app/models"><code>app/models/</code></a>.</p>
+<h2 id="_1">Связи между сущностями</h2>
+<table>
+<thead>
+<tr>
+<th>Тип связи</th>
+<th>Пример</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>many-to-many</strong></td>
+<td><code>Task</code> ↔ <code>Tag</code> (через <code>TaskTagLink</code>)</td>
+</tr>
+<tr>
+<td><strong>one-to-many</strong></td>
+<td><code>Team</code> → <code>TeamMember</code>, <code>Solution</code> → <code>Evaluation</code>, <code>Task</code> → <code>TaskResourceLink</code></td>
+</tr>
+<tr>
+<td><strong>one-to-one</strong></td>
+<td><code>Task.curator</code> → <code>User</code>, <code>Team.captain</code> → <code>User</code></td>
+</tr>
+<tr>
+<td><strong>many-to-one</strong></td>
+<td><code>Team.selected_task</code> → <code>Task</code>, <code>Solution.task</code> → <code>Task</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="appmodelsuserpy"><code>app/models/user.py</code></h2>
+<pre><code class="language-python">import enum
+from typing import TYPE_CHECKING, Optional
+
+from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from app.models.task import Task
+    from app.models.team import Team
+    from app.models.solution import Evaluation
+
+
+class UserRole(str, enum.Enum):
+    &quot;&quot;&quot;Роли пользователей системы хакатона.&quot;&quot;&quot;
+    ADMIN = &quot;ADMIN&quot;      # Главный администратор
+    JURY = &quot;JURY&quot;        # Жюри
+    CURATOR = &quot;CURATOR&quot;  # Куратор задачи
+    CAPTAIN = &quot;CAPTAIN&quot;  # Капитан команды
+
+
+class User(SQLModel, table=True):
+    __tablename__ = &quot;users&quot;
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    username: str = Field(index=True, unique=True, max_length=150)
+    email: str = Field(default=&quot;&quot;, max_length=255)
+    hashed_password: str = Field(max_length=255)
+    role: UserRole = Field(default=UserRole.CAPTAIN)
+    full_name: str = Field(default=&quot;&quot;, max_length=255)
+    organization: str = Field(default=&quot;&quot;, max_length=255)
+    is_active: bool = Field(default=True)
+
+    # one-to-many / one-to-one связи
+    curated_task: Optional[&quot;Task&quot;] = Relationship(back_populates=&quot;curator&quot;)
+    team: Optional[&quot;Team&quot;] = Relationship(back_populates=&quot;captain&quot;)
+    evaluations_given: list[&quot;Evaluation&quot;] = Relationship(back_populates=&quot;jury_member&quot;)
+</code></pre>
+<h2 id="appmodelstaskpy"><code>app/models/task.py</code></h2>
+<pre><code class="language-python">from datetime import datetime
+from typing import TYPE_CHECKING, Optional
+
+from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from app.models.user import User
+    from app.models.team import Team
+    from app.models.solution import Solution
+
+
+class TaskTagLink(SQLModel, table=True):
+    &quot;&quot;&quot;Связующая таблица для many-to-many между Task и Tag.&quot;&quot;&quot;
+    __tablename__ = &quot;task_tag_link&quot;
+
+    task_id: Optional[int] = Field(default=None, foreign_key=&quot;tasks.id&quot;, primary_key=True)
+    tag_id: Optional[int] = Field(default=None, foreign_key=&quot;tags.id&quot;, primary_key=True)
+
+
+class Tag(SQLModel, table=True):
+    __tablename__ = &quot;tags&quot;
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str = Field(index=True, unique=True, max_length=64)
+
+    tasks: list[&quot;Task&quot;] = Relationship(back_populates=&quot;tags&quot;, link_model=TaskTagLink)
+
+
+class Task(SQLModel, table=True):
+    __tablename__ = &quot;tasks&quot;
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str = Field(max_length=255)
+    description: str = &quot;&quot;
+    consultation_url: str = Field(default=&quot;&quot;, max_length=500)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    # Куратор ведёт одну задачу (one-to-one): FK на пользователя, уникальный
+    curator_id: Optional[int] = Field(default=None, foreign_key=&quot;users.id&quot;, unique=True)
+    curator: Optional[&quot;User&quot;] = Relationship(back_populates=&quot;curated_task&quot;)
+
+    # many-to-many с тегами
+    tags: list[&quot;Tag&quot;] = Relationship(back_populates=&quot;tasks&quot;, link_model=TaskTagLink)
+
+    # one-to-many: ресурсные ссылки
+    resource_links: list[&quot;TaskResourceLink&quot;] = Relationship(
+        back_populates=&quot;task&quot;,
+        sa_relationship_kwargs={&quot;cascade&quot;: &quot;all, delete-orphan&quot;},
+    )
+
+    # one-to-many: команды, выбравшие эту задачу
+    teams: list[&quot;Team&quot;] = Relationship(back_populates=&quot;selected_task&quot;)
+
+    # one-to-many: решения по этой задаче
+    solutions: list[&quot;Solution&quot;] = Relationship(back_populates=&quot;task&quot;)
+
+
+class TaskResourceLink(SQLModel, table=True):
+    &quot;&quot;&quot;Ссылка-ресурс, прикреплённая к задаче (документация, датасет и т.п.).&quot;&quot;&quot;
+    __tablename__ = &quot;task_resource_links&quot;
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    task_id: int = Field(foreign_key=&quot;tasks.id&quot;)
+    title: str = Field(max_length=255)
+    url: str = Field(max_length=500)
+
+    task: Optional[&quot;Task&quot;] = Relationship(back_populates=&quot;resource_links&quot;)
+</code></pre>
+<h2 id="appmodelsteampy"><code>app/models/team.py</code></h2>
+<pre><code class="language-python">from datetime import datetime
+from typing import TYPE_CHECKING, Optional
+
+from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from app.models.user import User
+    from app.models.task import Task
+    from app.models.solution import Solution
+
+
+class Team(SQLModel, table=True):
+    __tablename__ = &quot;teams&quot;
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str = Field(max_length=255)
+    motto: str = Field(default=&quot;&quot;, max_length=255)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    # В системе регистрируется только капитан (one-to-one с User)
+    captain_id: int = Field(foreign_key=&quot;users.id&quot;, unique=True)
+    captain: Optional[&quot;User&quot;] = Relationship(back_populates=&quot;team&quot;)
+
+    # Команда выбирает одну задачу (many-to-one)
+    selected_task_id: Optional[int] = Field(default=None, foreign_key=&quot;tasks.id&quot;)
+    selected_task: Optional[&quot;Task&quot;] = Relationship(back_populates=&quot;teams&quot;)
+
+    # one-to-many: участники команды
+    members: list[&quot;TeamMember&quot;] = Relationship(
+        back_populates=&quot;team&quot;,
+        sa_relationship_kwargs={&quot;cascade&quot;: &quot;all, delete-orphan&quot;},
+    )
+
+    # one-to-many: решения команды
+    solutions: list[&quot;Solution&quot;] = Relationship(
+        back_populates=&quot;team&quot;,
+        sa_relationship_kwargs={&quot;cascade&quot;: &quot;all, delete-orphan&quot;},
+    )
+
+
+class TeamMember(SQLModel, table=True):
+    &quot;&quot;&quot;Участник команды (не является пользователем системы).&quot;&quot;&quot;
+    __tablename__ = &quot;team_members&quot;
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    team_id: int = Field(foreign_key=&quot;teams.id&quot;)
+    full_name: str = Field(max_length=255)
+    email: str = Field(default=&quot;&quot;, max_length=255)
+    role_in_team: str = Field(default=&quot;&quot;, max_length=128)
+
+    team: Optional[&quot;Team&quot;] = Relationship(back_populates=&quot;members&quot;)
+</code></pre>
+<h2 id="appmodelssolutionpy"><code>app/models/solution.py</code></h2>
+<pre><code class="language-python">import enum
+from datetime import datetime
+from typing import TYPE_CHECKING, Optional
+
+from sqlalchemy import UniqueConstraint
+from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from app.models.user import User
+    from app.models.task import Task
+    from app.models.team import Team
+
+
+class SolutionStatus(str, enum.Enum):
+    DRAFT = &quot;DRAFT&quot;          # Черновик
+    SUBMITTED = &quot;SUBMITTED&quot;  # Отправлено
+
+
+class Solution(SQLModel, table=True):
+    __tablename__ = &quot;solutions&quot;
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str = Field(max_length=255)
+    description: str = &quot;&quot;
+    repo_url: str = Field(default=&quot;&quot;, max_length=500)
+    status: SolutionStatus = Field(default=SolutionStatus.DRAFT)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    submitted_at: Optional[datetime] = Field(default=None)
+
+    team_id: int = Field(foreign_key=&quot;teams.id&quot;)
+    team: Optional[&quot;Team&quot;] = Relationship(back_populates=&quot;solutions&quot;)
+
+    task_id: int = Field(foreign_key=&quot;tasks.id&quot;)
+    task: Optional[&quot;Task&quot;] = Relationship(back_populates=&quot;solutions&quot;)
+
+    # one-to-many: оценки жюри
+    evaluations: list[&quot;Evaluation&quot;] = Relationship(
+        back_populates=&quot;solution&quot;,
+        sa_relationship_kwargs={&quot;cascade&quot;: &quot;all, delete-orphan&quot;},
+    )
+
+
+class Evaluation(SQLModel, table=True):
+    &quot;&quot;&quot;Оценка решения членом жюри. Уникальна по паре (решение, член жюри).&quot;&quot;&quot;
+    __tablename__ = &quot;evaluations&quot;
+    __table_args__ = (UniqueConstraint(&quot;solution_id&quot;, &quot;jury_member_id&quot;, name=&quot;uq_evaluation_solution_jury&quot;),)
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    score: int = Field(ge=0, le=10)
+    comment: str = &quot;&quot;
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    solution_id: int = Field(foreign_key=&quot;solutions.id&quot;)
+    solution: Optional[&quot;Solution&quot;] = Relationship(back_populates=&quot;evaluations&quot;)
+
+    jury_member_id: int = Field(foreign_key=&quot;users.id&quot;)
+    jury_member: Optional[&quot;User&quot;] = Relationship(back_populates=&quot;evaluations_given&quot;)
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../setup/" class="btn btn-neutral float-left" title="Установка и соединение с БД"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../security/" class="btn btn-neutral float-right" title="Безопасность (JWT вручную)">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026" class="fa fa-code-fork" style="color: #fcfcfc"> ITMO_ICT_WebDevelopment_tools_2025-2026</a>
+        </span>
+    
+    
+      <span><a href="../setup/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../security/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

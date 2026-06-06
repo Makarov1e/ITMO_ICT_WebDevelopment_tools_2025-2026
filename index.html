@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="Отчёт по лабораторной работе 1 (FastAPI + SQLModel + PostgreSQL + Alembic + ручной JWT)" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>ЛР1 — FastAPI Hackathon API</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u0413\u043b\u0430\u0432\u043d\u0430\u044f";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> ЛР1 — FastAPI Hackathon API
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Главная</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#github">Ссылки на GitHub</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_1">Соответствие заданию</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#9">Задание на 9 баллов</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#15">Задание на 15 баллов</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_2">Архитектура</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_3">Предметная область</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="setup/">Установка и соединение с БД</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="models/">Модели (ORM)</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="security/">Безопасность (JWT вручную)</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="endpoints/">Эндпоинты API</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">ЛР1 — FastAPI Hackathon API</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Главная</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/edit/master/docs/index.md">Edit on ITMO_ICT_WebDevelopment_tools_2025-2026</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="1-fastapi-hackathon-api">Лабораторная работа 1 — FastAPI Hackathon API</h1>
+<p>Серверное приложение системы проведения <strong>хакатона</strong> на <strong>FastAPI</strong> с ORM <strong>SQLModel</strong>,
+БД <strong>PostgreSQL</strong>, миграциями <strong>Alembic</strong> и <strong>ручной JWT-аутентификацией</strong>.</p>
+<h2 id="github">Ссылки на GitHub</h2>
+<ul>
+<li><strong>Репозиторий:</strong> <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026">https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026</a></li>
+<li><strong>Папка лабораторной (ветка <code>main</code>):</strong> <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/tree/main/lab1">https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/tree/main/lab1</a></li>
+<li><strong>Исходный код приложения:</strong> <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/tree/main/lab1/app"><code>lab1/app/</code></a></li>
+<li><strong>Миграции Alembic:</strong> <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/tree/main/lab1/alembic"><code>lab1/alembic/</code></a></li>
+</ul>
+<h2 id="_1">Соответствие заданию</h2>
+<h3 id="9">Задание на 9 баллов</h3>
+<table>
+<thead>
+<tr>
+<th>Требование</th>
+<th>Реализация</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ORM-таблицы (SQLAlchemy/SQLModel) + PostgreSQL</td>
+<td><a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/tree/main/lab1/app/models"><code>app/models/</code></a> — см. <a href="models/">Модели</a></td>
+</tr>
+<tr>
+<td>CRUD-API</td>
+<td><a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/tree/main/lab1/app/api/routers"><code>app/api/routers/</code></a> — см. <a href="endpoints/">Эндпоинты</a></td>
+</tr>
+<tr>
+<td>GET с вложенными объектами (M2M, 1-M)</td>
+<td>задача↔теги (M2M); команда→участники, решение→оценки, задача→ссылки (1-M)</td>
+</tr>
+<tr>
+<td>Миграции Alembic</td>
+<td><a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/tree/main/lab1/alembic"><code>alembic/</code></a></td>
+</tr>
+<tr>
+<td>Аннотации типов в API</td>
+<td><a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/tree/main/lab1/app/schemas"><code>app/schemas/</code></a></td>
+</tr>
+<tr>
+<td>Разделение кода по слоям</td>
+<td><code>models / schemas / crud / api / core</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="15">Задание на 15 баллов</h3>
+<table>
+<thead>
+<tr>
+<th>Требование</th>
+<th>Реализация</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Авторизация и регистрация</td>
+<td><a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/blob/main/lab1/app/api/routers/auth.py"><code>app/api/routers/auth.py</code></a></td>
+</tr>
+<tr>
+<td>Генерация JWT-токенов</td>
+<td><code>create_access_token</code> в <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/blob/main/lab1/app/core/security.py"><code>app/core/security.py</code></a></td>
+</tr>
+<tr>
+<td><strong>Аутентификация по JWT — вручную</strong></td>
+<td><code>decode_access_token</code> + <code>get_current_user</code> (<a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/blob/main/lab1/app/api/deps.py">deps.py</a>)</td>
+</tr>
+<tr>
+<td>Хэширование паролей</td>
+<td>PBKDF2-HMAC-SHA256 (стандартная библиотека)</td>
+</tr>
+<tr>
+<td>Доп. методы пользователя</td>
+<td><code>GET /users/me</code>, <code>GET /users</code>, <code>GET /users/{id}</code>, <code>POST /users/me/change-password</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Важно (п.3):</strong> JWT (кодирование, декодирование, проверка подписи) и хэширование паролей
+реализованы только на стандартной библиотеке Python (<code>hmac</code>, <code>hashlib</code>, <code>base64</code>, <code>secrets</code>),
+без сторонних JWT/security-библиотек. См. <a href="security/">Безопасность</a>.</p>
+</blockquote>
+<h2 id="_2">Архитектура</h2>
+<pre><code>lab1/
+├── alembic/                 # миграции БД
+├── app/
+│   ├── main.py              # точка входа FastAPI
+│   ├── core/                # config, database, security
+│   ├── models/              # ORM-модели SQLModel
+│   ├── schemas/             # Pydantic-схемы (вход/выход API)
+│   ├── crud/                # бизнес-логика работы с БД
+│   └── api/                 # deps + routers
+├── requirements.txt
+└── seed.py                  # наполнение демо-данными
+</code></pre>
+<h2 id="_3">Предметная область</h2>
+<p>Система хакатона: <strong>пользователи с ролями</strong> (ADMIN / JURY / CURATOR / CAPTAIN),
+<strong>задачи</strong> (с тегами и ресурсами), <strong>команды</strong> (с участниками), <strong>решения</strong> и <strong>оценки жюри</strong>.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="setup/" class="btn btn-neutral float-right" title="Установка и соединение с БД">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026" class="fa fa-code-fork" style="color: #fcfcfc"> ITMO_ICT_WebDevelopment_tools_2025-2026</a>
+        </span>
+    
+    
+    
+      <span><a href="setup/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-06-06 19:17:56.282488+00:00
+-->

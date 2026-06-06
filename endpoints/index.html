@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Эндпоинты API - ЛР1 — FastAPI Hackathon API</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u042d\u043d\u0434\u043f\u043e\u0438\u043d\u0442\u044b API";
+        var mkdocs_page_input_path = "endpoints.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ЛР1 — FastAPI Hackathon API
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Главная</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../setup/">Установка и соединение с БД</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../models/">Модели (ORM)</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../security/">Безопасность (JWT вручную)</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Эндпоинты API</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#authpy">Аутентификация — auth.py</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#userspy">Пользователи — users.py</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#taskspy">Задачи и теги — tasks.py</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#teamspy">Команды — teams.py</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#solutionspy">Решения и оценки — solutions.py</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_1">Примеры запросов</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#_2">Регистрация и логин</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#_3">Запрос с токеном</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#_4">Создание задачи с тегами и ресурсами (👑)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#get">GET решения с вложенными оценками и средним баллом</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ЛР1 — FastAPI Hackathon API</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Эндпоинты API</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/edit/master/docs/endpoints.md">Edit on ITMO_ICT_WebDevelopment_tools_2025-2026</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="api">Эндпоинты API</h1>
+<p>Интерактивная документация (Swagger UI) доступна на <code>/docs</code>, схема OpenAPI — на <code>/openapi.json</code>.
+Исходники роутеров: <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/tree/main/lab1/app/api/routers"><code>app/api/routers/</code></a>.</p>
+<p>Обозначения: 🔑 — требуется JWT, 👑 — только <code>ADMIN</code>, ⚖️ — только <code>JURY</code>.</p>
+<h2 id="authpy">Аутентификация — <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/blob/main/lab1/app/api/routers/auth.py"><code>auth.py</code></a></h2>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Путь</th>
+<th>Описание</th>
+<th>Доступ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/auth/register</code></td>
+<td>Регистрация пользователя</td>
+<td>публичный</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/login</code></td>
+<td>Авторизация, выдача JWT</td>
+<td>публичный</td>
+</tr>
+</tbody>
+</table>
+<h2 id="userspy">Пользователи — <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/blob/main/lab1/app/api/routers/users.py"><code>users.py</code></a></h2>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Путь</th>
+<th>Описание</th>
+<th>Доступ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/users/me</code></td>
+<td>Текущий пользователь (по JWT)</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/users/me/change-password</code></td>
+<td>Смена пароля</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/users</code></td>
+<td>Список пользователей</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/users/{user_id}</code></td>
+<td>Пользователь по id</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>/users/{user_id}</code></td>
+<td>Обновление профиля (себя или 👑)</td>
+<td>🔑</td>
+</tr>
+</tbody>
+</table>
+<h2 id="taskspy">Задачи и теги — <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/blob/main/lab1/app/api/routers/tasks.py"><code>tasks.py</code></a></h2>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Путь</th>
+<th>Описание</th>
+<th>Доступ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/tasks</code></td>
+<td>Список задач (с вложенными тегами/куратором/ссылками)</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/tasks/{task_id}</code></td>
+<td>Задача по id (вложенные объекты)</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/tasks</code></td>
+<td>Создать задачу</td>
+<td>👑</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>/tasks/{task_id}</code></td>
+<td>Обновить задачу</td>
+<td>👑</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/tasks/{task_id}</code></td>
+<td>Удалить задачу</td>
+<td>👑</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/tasks/tags/all</code></td>
+<td>Список тегов</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/tasks/tags</code></td>
+<td>Создать тег</td>
+<td>👑</td>
+</tr>
+</tbody>
+</table>
+<h2 id="teamspy">Команды — <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/blob/main/lab1/app/api/routers/teams.py"><code>teams.py</code></a></h2>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Путь</th>
+<th>Описание</th>
+<th>Доступ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/teams</code></td>
+<td>Список команд (с вложенными участниками)</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/teams/{team_id}</code></td>
+<td>Команда по id (вложенные объекты)</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/teams</code></td>
+<td>Создать команду (с участниками)</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>/teams/{team_id}</code></td>
+<td>Обновить команду</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/teams/{team_id}</code></td>
+<td>Удалить команду</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/teams/{team_id}/members</code></td>
+<td>Добавить участника</td>
+<td>🔑</td>
+</tr>
+</tbody>
+</table>
+<h2 id="solutionspy">Решения и оценки — <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/blob/main/lab1/app/api/routers/solutions.py"><code>solutions.py</code></a></h2>
+<table>
+<thead>
+<tr>
+<th>Метод</th>
+<th>Путь</th>
+<th>Описание</th>
+<th>Доступ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/solutions</code></td>
+<td>Список решений (вложенные оценки + средний балл)</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/solutions/{solution_id}</code></td>
+<td>Решение по id</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/solutions</code></td>
+<td>Создать решение</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>/solutions/{solution_id}</code></td>
+<td>Обновить решение</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/solutions/{solution_id}</code></td>
+<td>Удалить решение</td>
+<td>🔑</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/solutions/{solution_id}/evaluations</code></td>
+<td>Оценить решение</td>
+<td>⚖️</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_1">Примеры запросов</h2>
+<h3 id="_2">Регистрация и логин</h3>
+<pre><code class="language-bash">curl -X POST http://127.0.0.1:8001/auth/register \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{&quot;username&quot;:&quot;admin&quot;,&quot;password&quot;:&quot;admin12345&quot;,&quot;role&quot;:&quot;ADMIN&quot;}'
+
+curl -X POST http://127.0.0.1:8001/auth/login \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{&quot;username&quot;:&quot;admin&quot;,&quot;password&quot;:&quot;admin12345&quot;}'
+# -&gt; {&quot;access_token&quot;:&quot;&lt;JWT&gt;&quot;,&quot;token_type&quot;:&quot;bearer&quot;}
+</code></pre>
+<h3 id="_3">Запрос с токеном</h3>
+<pre><code class="language-bash">curl http://127.0.0.1:8001/users/me \
+  -H &quot;Authorization: Bearer &lt;JWT&gt;&quot;
+</code></pre>
+<h3 id="_4">Создание задачи с тегами и ресурсами (👑)</h3>
+<pre><code class="language-bash">curl -X POST http://127.0.0.1:8001/tasks \
+  -H &quot;Authorization: Bearer &lt;JWT&gt;&quot; -H &quot;Content-Type: application/json&quot; \
+  -d '{&quot;title&quot;:&quot;Рекомендательная система&quot;,&quot;description&quot;:&quot;ML&quot;,&quot;curator_id&quot;:4,
+       &quot;tag_ids&quot;:[1,2],&quot;resource_links&quot;:[{&quot;title&quot;:&quot;Датасет&quot;,&quot;url&quot;:&quot;https://x/ds&quot;}]}'
+</code></pre>
+<h3 id="get">GET решения с вложенными оценками и средним баллом</h3>
+<pre><code class="language-json">{
+  &quot;id&quot;: 1, &quot;title&quot;: &quot;RecoEngine&quot;, &quot;status&quot;: &quot;SUBMITTED&quot;,
+  &quot;team&quot;: {&quot;id&quot;: 1, &quot;name&quot;: &quot;CodeStorm&quot;},
+  &quot;task&quot;: {&quot;id&quot;: 1, &quot;title&quot;: &quot;Рекомендательная система&quot;},
+  &quot;evaluations&quot;: [
+    {&quot;id&quot;: 1, &quot;score&quot;: 9, &quot;comment&quot;: &quot;Отлично&quot;,
+     &quot;jury_member&quot;: {&quot;id&quot;: 2, &quot;username&quot;: &quot;jury1&quot;, &quot;role&quot;: &quot;JURY&quot;}}
+  ],
+  &quot;avg_score&quot;: 9.0
+}
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../security/" class="btn btn-neutral float-left" title="Безопасность (JWT вручную)"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026" class="fa fa-code-fork" style="color: #fcfcfc"> ITMO_ICT_WebDevelopment_tools_2025-2026</a>
+        </span>
+    
+    
+      <span><a href="../security/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

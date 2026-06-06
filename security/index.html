@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Безопасность (JWT вручную) - ЛР1 — FastAPI Hackathon API</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u0411\u0435\u0437\u043e\u043f\u0430\u0441\u043d\u043e\u0441\u0442\u044c (JWT \u0432\u0440\u0443\u0447\u043d\u0443\u044e)";
+        var mkdocs_page_input_path = "security.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> ЛР1 — FastAPI Hackathon API
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Главная</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../setup/">Установка и соединение с БД</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../models/">Модели (ORM)</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Безопасность (JWT вручную)</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#pbkdf2-hmac-sha256">Хэширование паролей (PBKDF2-HMAC-SHA256)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#jwt-hs256">JWT (HS256) — ручная реализация</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_1">Зависимость аутентификации (ручная)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_2">Проверка (результаты)</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../endpoints/">Эндпоинты API</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">ЛР1 — FastAPI Hackathon API</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Безопасность (JWT вручную)</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/edit/master/docs/security.md">Edit on ITMO_ICT_WebDevelopment_tools_2025-2026</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="jwt">Безопасность: хэширование и JWT вручную</h1>
+<p>По заданию (п.3) аутентификация по JWT реализована <strong>вручную</strong>, без сторонних
+библиотек: используется только стандартная библиотека Python
+(<code>hashlib</code>, <code>hmac</code>, <code>base64</code>, <code>json</code>, <code>secrets</code>). Это покрывает создание токена,
+проверку подписи и срока действия, а также хэширование паролей.</p>
+<h2 id="pbkdf2-hmac-sha256">Хэширование паролей (PBKDF2-HMAC-SHA256)</h2>
+<p>Файл <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/blob/main/lab1/app/core/security.py"><code>app/core/security.py</code></a>:</p>
+<pre><code class="language-python">import base64, hashlib, hmac, secrets
+
+_PBKDF2_ITERATIONS = 260_000
+_SALT_BYTES = 16
+
+
+def hash_password(password: str) -&gt; str:
+    &quot;&quot;&quot;Возвращает строку формата pbkdf2_sha256$iterations$salt$hash.&quot;&quot;&quot;
+    salt = secrets.token_bytes(_SALT_BYTES)
+    dk = hashlib.pbkdf2_hmac(&quot;sha256&quot;, password.encode(&quot;utf-8&quot;), salt, _PBKDF2_ITERATIONS)
+    return &quot;pbkdf2_sha256${}${}${}&quot;.format(
+        _PBKDF2_ITERATIONS,
+        base64.b64encode(salt).decode(&quot;ascii&quot;),
+        base64.b64encode(dk).decode(&quot;ascii&quot;),
+    )
+
+
+def verify_password(password: str, stored: str) -&gt; bool:
+    &quot;&quot;&quot;Проверка пароля (constant-time сравнение).&quot;&quot;&quot;
+    try:
+        algorithm, iterations, salt_b64, hash_b64 = stored.split(&quot;$&quot;)
+        if algorithm != &quot;pbkdf2_sha256&quot;:
+            return False
+        salt = base64.b64decode(salt_b64)
+        expected = base64.b64decode(hash_b64)
+        dk = hashlib.pbkdf2_hmac(&quot;sha256&quot;, password.encode(&quot;utf-8&quot;), salt, int(iterations))
+        return hmac.compare_digest(dk, expected)
+    except (ValueError, TypeError):
+        return False
+</code></pre>
+<h2 id="jwt-hs256">JWT (HS256) — ручная реализация</h2>
+<pre><code class="language-python">import base64, hashlib, hmac, json, time
+from app.core.config import settings
+
+
+class JWTError(Exception):
+    &quot;&quot;&quot;Ошибка валидации/декодирования JWT.&quot;&quot;&quot;
+
+
+def _b64url_encode(data: bytes) -&gt; str:
+    return base64.urlsafe_b64encode(data).rstrip(b&quot;=&quot;).decode(&quot;ascii&quot;)
+
+
+def _b64url_decode(segment: str) -&gt; bytes:
+    padding = &quot;=&quot; * (-len(segment) % 4)
+    return base64.urlsafe_b64decode(segment + padding)
+
+
+def _sign(signing_input: bytes) -&gt; bytes:
+    return hmac.new(settings.jwt_secret.encode(&quot;utf-8&quot;), signing_input, hashlib.sha256).digest()
+
+
+def create_access_token(subject, extra=None) -&gt; str:
+    &quot;&quot;&quot;Создаёт подписанный JWT с полями sub, iat, exp.&quot;&quot;&quot;
+    header = {&quot;alg&quot;: settings.jwt_algorithm, &quot;typ&quot;: &quot;JWT&quot;}
+    now = int(time.time())
+    payload = {&quot;sub&quot;: str(subject), &quot;iat&quot;: now,
+               &quot;exp&quot;: now + settings.access_token_expire_minutes * 60}
+    if extra:
+        payload.update(extra)
+
+    header_segment = _b64url_encode(json.dumps(header, separators=(&quot;,&quot;, &quot;:&quot;)).encode())
+    payload_segment = _b64url_encode(json.dumps(payload, separators=(&quot;,&quot;, &quot;:&quot;)).encode())
+    signing_input = f&quot;{header_segment}.{payload_segment}&quot;.encode(&quot;ascii&quot;)
+    signature_segment = _b64url_encode(_sign(signing_input))
+    return f&quot;{header_segment}.{payload_segment}.{signature_segment}&quot;
+
+
+def decode_access_token(token: str) -&gt; dict:
+    &quot;&quot;&quot;Проверяет подпись и срок действия токена, возвращает payload.&quot;&quot;&quot;
+    try:
+        header_segment, payload_segment, signature_segment = token.split(&quot;.&quot;)
+    except ValueError as exc:
+        raise JWTError(&quot;Некорректный формат токена&quot;) from exc
+
+    signing_input = f&quot;{header_segment}.{payload_segment}&quot;.encode(&quot;ascii&quot;)
+    expected_sig = _sign(signing_input)
+    try:
+        actual_sig = _b64url_decode(signature_segment)
+    except (ValueError, TypeError) as exc:
+        raise JWTError(&quot;Некорректная подпись&quot;) from exc
+
+    # Сравнение подписи в постоянное время — защита от timing-атак
+    if not hmac.compare_digest(expected_sig, actual_sig):
+        raise JWTError(&quot;Неверная подпись токена&quot;)
+
+    payload = json.loads(_b64url_decode(payload_segment))
+    exp = payload.get(&quot;exp&quot;)
+    if exp is None or int(time.time()) &gt;= int(exp):
+        raise JWTError(&quot;Срок действия токена истёк&quot;)
+    return payload
+</code></pre>
+<h2 id="_1">Зависимость аутентификации (ручная)</h2>
+<p>Файл <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/blob/main/lab1/app/api/deps.py"><code>app/api/deps.py</code></a>
+— мы сами читаем заголовок <code>Authorization</code>, парсим схему <code>Bearer</code>, проверяем токен
+и достаём пользователя из БД:</p>
+<pre><code class="language-python">def get_current_user(session: SessionDep, authorization: str | None = Header(None)) -&gt; User:
+    credentials_error = HTTPException(401, &quot;Не удалось проверить учётные данные&quot;,
+                                      headers={&quot;WWW-Authenticate&quot;: &quot;Bearer&quot;})
+    if not authorization:
+        raise credentials_error
+
+    parts = authorization.split()
+    if len(parts) != 2 or parts[0].lower() != &quot;bearer&quot;:
+        raise credentials_error
+    token = parts[1]
+
+    try:
+        payload = decode_access_token(token)
+    except JWTError as exc:
+        raise HTTPException(401, str(exc), headers={&quot;WWW-Authenticate&quot;: &quot;Bearer&quot;}) from exc
+
+    user = session.get(User, int(payload.get(&quot;sub&quot;)))
+    if user is None or not user.is_active:
+        raise credentials_error
+    return user
+
+
+def require_roles(*roles: UserRole):
+    &quot;&quot;&quot;Фабрика зависимостей RBAC: пропускает только пользователей с нужной ролью.&quot;&quot;&quot;
+    def checker(current_user: CurrentUser) -&gt; User:
+        if current_user.role not in roles:
+            raise HTTPException(403, &quot;Недостаточно прав для выполнения операции&quot;)
+        return current_user
+    return checker
+</code></pre>
+<h2 id="_2">Проверка (результаты)</h2>
+<table>
+<thead>
+<tr>
+<th>Сценарий</th>
+<th>Результат</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Запрос без токена</td>
+<td><code>401</code></td>
+</tr>
+<tr>
+<td>Битый/поддельный токен</td>
+<td><code>401</code> «Неверная подпись токена»</td>
+</tr>
+<tr>
+<td>Просроченный токен</td>
+<td><code>401</code> «Срок действия токена истёк»</td>
+</tr>
+<tr>
+<td>Не-админ создаёт задачу</td>
+<td><code>403</code></td>
+</tr>
+<tr>
+<td>Не-жюри оценивает решение</td>
+<td><code>403</code></td>
+</tr>
+<tr>
+<td>Повторная оценка тем же жюри</td>
+<td><code>409</code> (unique constraint)</td>
+</tr>
+</tbody>
+</table>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../models/" class="btn btn-neutral float-left" title="Модели (ORM)"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../endpoints/" class="btn btn-neutral float-right" title="Эндпоинты API">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026" class="fa fa-code-fork" style="color: #fcfcfc"> ITMO_ICT_WebDevelopment_tools_2025-2026</a>
+        </span>
+    
+    
+      <span><a href="../models/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../endpoints/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
