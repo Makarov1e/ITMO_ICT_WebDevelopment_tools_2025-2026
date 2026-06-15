@@ -98,3 +98,21 @@ python seed.py                              # демо-данные (идемп�
 
 - Swagger UI: <http://127.0.0.1:8001/docs>
 - OpenAPI JSON: <http://127.0.0.1:8001/openapi.json>
+
+## Демо-учётные записи
+
+`seed.py` создаёт пользователей для проверки (пароль у каждого вида `<роль>12345`):
+
+| Логин | Пароль | Роль |
+|---|---|---|
+| `admin` | `admin12345` | ADMIN |
+| `jury1` | `jury12345` | JURY |
+| `curator1` | `curator12345` | CURATOR |
+| `captain1` | `captain12345` | CAPTAIN |
+
+### Сценарий проверки в Swagger
+
+1. `POST /auth/login` с `admin / admin12345` → скопировать `access_token`.
+2. Кнопка **Authorize** 🔒 → вставить токен (без слова `Bearer`).
+3. `GET /tasks/{task_id}` (id 1–5) → ответ с вложенными `curator`, `tags`, `resource_links`.
+4. Войти как `captain1` и попробовать `POST /tasks` → **403** (создавать задачи может только ADMIN).

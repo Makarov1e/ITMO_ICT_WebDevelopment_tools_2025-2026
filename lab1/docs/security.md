@@ -108,21 +108,27 @@ def decode_access_token(token: str) -> dict:
 
 ## Зависимость аутентификации (ручная)
 
-Файл [`app/api/deps.py`](https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/blob/main/lab1/app/api/deps.py)
-— мы сами читаем заголовок `Authorization`, парсим схему `Bearer`, проверяем токен
-и достаём пользователя из БД:
+Файл [`app/api/deps.py`](https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/blob/main/lab1/app/api/deps.py).
+Схема `HTTPBearer` нужна только для того, чтобы в Swagger появилась кнопка
+**Authorize** и токен извлекался из заголовка `Authorization`. Сама проверка JWT
+остаётся ручной — её выполняет наш `decode_access_token`:
 
 ```python
-def get_current_user(session: SessionDep, authorization: str | None = Header(None)) -> User:
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+# auto_error=False — отсутствие токена обрабатываем сами, единообразно
+bearer_scheme = HTTPBearer(auto_error=False)
+
+
+def get_current_user(
+    session: SessionDep,
+    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
+) -> User:
     credentials_error = HTTPException(401, "Не удалось проверить учётные данные",
                                       headers={"WWW-Authenticate": "Bearer"})
-    if not authorization:
+    if credentials is None or credentials.scheme.lower() != "bearer":
         raise credentials_error
-
-    parts = authorization.split()
-    if len(parts) != 2 or parts[0].lower() != "bearer":
-        raise credentials_error
-    token = parts[1]
+    token = credentials.credentials
 
     try:
         payload = decode_access_token(token)
