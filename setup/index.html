@@ -60,6 +60,12 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#_5">Запуск и наполнение данными</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#-">Демо-учётные записи</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#swagger">Сценарий проверки в Swagger</a>
+    </li>
+        </ul>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -173,6 +179,46 @@ python seed.py                              # демо-данные (идемп�
 <li>Swagger UI: <a href="http://127.0.0.1:8001/docs">http://127.0.0.1:8001/docs</a></li>
 <li>OpenAPI JSON: <a href="http://127.0.0.1:8001/openapi.json">http://127.0.0.1:8001/openapi.json</a></li>
 </ul>
+<h2 id="-">Демо-учётные записи</h2>
+<p><code>seed.py</code> создаёт пользователей для проверки (пароль у каждого вида <code>&lt;роль&gt;12345</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Логин</th>
+<th>Пароль</th>
+<th>Роль</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>admin</code></td>
+<td><code>admin12345</code></td>
+<td>ADMIN</td>
+</tr>
+<tr>
+<td><code>jury1</code></td>
+<td><code>jury12345</code></td>
+<td>JURY</td>
+</tr>
+<tr>
+<td><code>curator1</code></td>
+<td><code>curator12345</code></td>
+<td>CURATOR</td>
+</tr>
+<tr>
+<td><code>captain1</code></td>
+<td><code>captain12345</code></td>
+<td>CAPTAIN</td>
+</tr>
+</tbody>
+</table>
+<h3 id="swagger">Сценарий проверки в Swagger</h3>
+<ol>
+<li><code>POST /auth/login</code> с <code>admin / admin12345</code> → скопировать <code>access_token</code>.</li>
+<li>Кнопка <strong>Authorize</strong> 🔒 → вставить токен (без слова <code>Bearer</code>).</li>
+<li><code>GET /tasks/{task_id}</code> (id 1–5) → ответ с вложенными <code>curator</code>, <code>tags</code>, <code>resource_links</code>.</li>
+<li>Войти как <code>captain1</code> и попробовать <code>POST /tasks</code> → <strong>403</strong> (создавать задачи может только ADMIN).</li>
+</ol>
               
             </div>
           </div><footer>
