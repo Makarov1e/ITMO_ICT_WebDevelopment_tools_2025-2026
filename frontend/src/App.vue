@@ -352,20 +352,31 @@ textarea {
 textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
 
 select {
-  background: var(--surface2);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: var(--surface2);
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
   border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text);
   font-family: 'Onest', sans-serif;
   font-size: 15px;
-  padding: 12px 14px;
+  padding: 12px 38px 12px 14px;
   outline: none;
   width: 100%;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
-select:focus { border-color: var(--accent); }
-option { background: var(--surface2); }
+select:hover { border-color: var(--text-muted); }
+select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235b6ef5' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}
+option { background: var(--surface); color: var(--text); }
 
 .flash {
   padding: 12px 16px;
@@ -518,8 +529,29 @@ option { background: var(--surface2); }
 .table-sub { font-size: 12px; color: var(--text-muted); }
 
 .assign-row { display: flex; gap: 6px; align-items: center; }
-.assign-select { padding: 6px 10px; font-size: 13px; min-width: 140px; }
+.assign-select {
+  padding: 8px 32px 8px 12px;
+  font-size: 13px;
+  min-width: 150px;
+  border-radius: 8px;
+  background-position: right 10px center;
+}
 .actions-row { display: flex; gap: 6px; }
+
+/* Кнопка подтверждения назначения куратора */
+.btn-icon.confirm {
+  width: 34px; height: 34px;
+  color: var(--accent);
+  border-color: rgba(91,110,245,0.4);
+  background: rgba(91,110,245,0.08);
+  font-size: 15px;
+}
+.btn-icon.confirm:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 16px var(--accent-glow);
+}
 
 .inner-form {
   background: var(--surface2);

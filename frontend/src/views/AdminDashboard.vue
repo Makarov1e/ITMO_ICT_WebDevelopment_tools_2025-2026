@@ -182,7 +182,7 @@ onMounted(load)
                       <option :value="null">— нет —</option>
                       <option v-for="u in users" :key="u.id" :value="u.id">{{ u.username }}</option>
                     </select>
-                    <button class="btn-icon" @click="assignCurator(task)" title="Сохранить">✓</button>
+                    <button class="btn-icon confirm" @click="assignCurator(task)" title="Сохранить">✓</button>
                   </div>
                 </td>
                 <td class="center">{{ teams.filter(t => t.selected_task?.id === task.id).length }}</td>

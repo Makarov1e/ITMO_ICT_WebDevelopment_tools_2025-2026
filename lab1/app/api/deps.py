@@ -1,15 +1,18 @@
 """Зависимости FastAPI: сессия БД и ручная аутентификация по JWT.
 
-Аутентификация (п.3 задания) реализована вручную: мы сами читаем заголовок
-Authorization, парсим схему Bearer, проверяем токен нашим декодером и
-достаём пользователя из БД. Сторонние библиотеки безопасности не используются.
+Аутентификация (п.3 задания) реализована вручную: проверку подписи и срока
+действия токена выполняет наш собственный `decode_access_token` (без сторонних
+JWT/security-библиотек). Схема `HTTPBearer` используется только для того, чтобы
+в Swagger появилась кнопка «Authorize» и токен извлекался из заголовка — сама
+валидация JWT остаётся ручной.
 """
 from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import Depends, Header, HTTPException, status
-from sqlmodel import Session, select
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlmodel import Session
 
 from app.core.database import get_session
 from app.core.security import JWTError, decode_access_token
@@ -17,10 +20,14 @@ from app.models.user import User, UserRole
 
 SessionDep = Annotated[Session, Depends(get_session)]
 
+# Схема Bearer для Swagger (кнопка Authorize). auto_error=False — ошибку
+# отсутствия токена обрабатываем сами, единообразно.
+bearer_scheme = HTTPBearer(auto_error=False)
+
 
 def get_current_user(
     session: SessionDep,
-    authorization: Annotated[str | None, Header()] = None,
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)] = None,
 ) -> User:
     """Извлекает и проверяет JWT из заголовка Authorization, возвращает пользователя."""
     credentials_error = HTTPException(
@@ -29,13 +36,9 @@ def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-    if not authorization:
+    if credentials is None or credentials.scheme.lower() != "bearer":
         raise credentials_error
-
-    parts = authorization.split()
-    if len(parts) != 2 or parts[0].lower() != "bearer":
-        raise credentials_error
-    token = parts[1]
+    token = credentials.credentials
 
     try:
         payload = decode_access_token(token)
