@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Лабораторная 2 - Средства веб-программирования — Макаров Егор</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u041b\u0430\u0431\u043e\u0440\u0430\u0442\u043e\u0440\u043d\u0430\u044f 2";
+        var mkdocs_page_input_path = "lab2/index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Средства веб-программирования — Макаров Егор
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Главная</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Лабораторная 1</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../lab1/">Обзор</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../lab1/setup/">Установка и соединение с БД</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../lab1/models/">Модели (ORM)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../lab1/security/">Безопасность (JWT вручную)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../lab1/endpoints/">Эндпоинты API</a>
+                  </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Лабораторная 2</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#_1">Теоретическая основа</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_2">Структура проекта</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_3">Запуск</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1">Задача 1</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-postgresql-1">Задача 2 (требуется запущенный PostgreSQL из ЛР1)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#1-1-n">Задача 1. Сумма чисел от 1 до N</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2-">Задача 2. Параллельный парсинг веб-страниц</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_4">Итоговые выводы</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../lab3/">Лабораторная 3</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Средства веб-программирования — Макаров Егор</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Лабораторная 2</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/edit/master/docs/lab2/index.md">Edit on ITMO_ICT_WebDevelopment_tools_2025-2026</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="2">Лабораторная работа 2. Потоки. Процессы. Асинхронность</h1>
+<p><strong>Студент:</strong> Макаров Егор</p>
+<p><strong>Цель работы:</strong> понять отличия между потоками и процессами и разобраться, что
+такое асинхронность в Python; на практике сравнить <code>threading</code>, <code>multiprocessing</code>
+и <code>asyncio</code> на CPU-bound и I/O-bound задачах.</p>
+<hr />
+<h2 id="_1">Теоретическая основа</h2>
+<table>
+<thead>
+<tr>
+<th>Подход</th>
+<th>Параллелизм</th>
+<th>Где выигрывает</th>
+<th>Причина</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>threading</strong></td>
+<td>псевдо-параллелизм (1 ядро)</td>
+<td>I/O-bound</td>
+<td>Из-за <strong>GIL</strong> одновременно Python-байткод исполняет только один поток. На время ожидания I/O GIL освобождается, поэтому потоки полезны при сетевых/дисковых операциях, но не на вычислениях.</td>
+</tr>
+<tr>
+<td><strong>multiprocessing</strong></td>
+<td>настоящий параллелизм (N ядер)</td>
+<td>CPU-bound</td>
+<td>Каждый процесс — свой интерпретатор и свой GIL. Вычисления идут реально параллельно, но создание процессов и обмен данными между ними дороже.</td>
+</tr>
+<tr>
+<td><strong>asyncio</strong></td>
+<td>конкурентность (1 поток)</td>
+<td>I/O-bound</td>
+<td>Кооперативная многозадачность через цикл событий. Эффективна при большом числе ожиданий I/O, но не ускоряет вычисления.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>GIL (Global Interpreter Lock)</strong> — глобальная блокировка интерпретатора CPython,
+не дающая нескольким потокам одновременно исполнять байткод. Именно поэтому
+<code>threading</code> не ускоряет CPU-bound задачи, а для них нужен <code>multiprocessing</code>.</p>
+<h2 id="_2">Структура проекта</h2>
+<pre><code>lab2/
+├── task1_sum/                  # Задача 1 — сумма чисел
+│   ├── config.py               # общие параметры, split_ranges, calculate_sum
+│   ├── threading_sum.py
+│   ├── multiprocessing_sum.py
+│   └── async_sum.py
+├── task2_parser/               # Задача 2 — параллельный парсинг
+│   ├── db.py                   # сохранение в БД из ЛР1 (таблица parsed_pages)
+│   ├── urls.py                 # список URL для парсинга
+│   ├── threading_parser.py
+│   ├── multiprocessing_parser.py
+│   └── async_parser.py
+├── requirements.txt
+└── README.md
+</code></pre>
+<h2 id="_3">Запуск</h2>
+<pre><code class="language-bash">cd lab2
+python3 -m venv venv &amp;&amp; source venv/bin/activate
+pip install -r requirements.txt
+</code></pre>
+<h3 id="1">Задача 1</h3>
+<pre><code class="language-bash">cd task1_sum
+python threading_sum.py            # значение по умолчанию (10^8)
+python multiprocessing_sum.py 1000000000   # можно задать своё N аргументом
+python async_sum.py
+</code></pre>
+<h3 id="2-postgresql-1">Задача 2 (требуется запущенный PostgreSQL из ЛР1)</h3>
+<pre><code class="language-bash">cd task2_parser
+python threading_parser.py
+python multiprocessing_parser.py
+python async_parser.py
+</code></pre>
+<hr />
+<h2 id="1-1-n">Задача 1. Сумма чисел от 1 до N</h2>
+<p>Каждая программа содержит функцию <code>calculate_sum(start, end)</code>, которая <strong>в цикле</strong>
+суммирует числа на отрезке (а не по формуле Гаусса — чтобы создать реальную
+CPU-bound нагрузку). Отрезок <code>[1, N]</code> делится на 8 равных подзадач функцией
+<code>split_ranges</code>, подзадачи выполняются параллельно, затем частичные суммы
+складываются.</p>
+<blockquote>
+<p>По заданию N = 10¹³. Полный перебор 10¹³ чисел в чистом Python занял бы десятки
+часов, поэтому замеры проведены на 10⁸ и 10⁹ (значение задаётся аргументом).
+Соотношение времён между подходами от размера N не зависит.</p>
+</blockquote>
+<p><strong>Результаты</strong> (8 подзадач, 10-ядерный CPU, корректная сумма во всех случаях):</p>
+<table>
+<thead>
+<tr>
+<th>N</th>
+<th>threading</th>
+<th>multiprocessing</th>
+<th>async</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10⁸</td>
+<td>2.44 c</td>
+<td><strong>0.51 c</strong></td>
+<td>2.30 c</td>
+</tr>
+<tr>
+<td>10⁹</td>
+<td>23.93 c</td>
+<td><strong>3.85 c</strong></td>
+<td>24.39 c</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Вывод по задаче 1:</strong> на CPU-bound вычислениях выигрывает только
+<code>multiprocessing</code> (ускорение ≈ ×6 на 10 ядрах). <code>threading</code> и <code>asyncio</code> работают
+со скоростью однопоточного решения — потоки упираются в GIL, а корутины в принципе
+выполняются в одном потоке и не отдают управление во время счёта.</p>
+<hr />
+<h2 id="2-">Задача 2. Параллельный парсинг веб-страниц</h2>
+<p>Каждая программа содержит функцию <code>parse_and_save(url)</code>: загружает HTML-страницу,
+извлекает её <code>&lt;title&gt;</code> (через BeautifulSoup), сохраняет в БД и печатает результат.
+Список из 10 URL <strong>делится на равные части</strong> (<code>split_into_chunks</code>, по числу
+воркеров <code>WORKERS = 3</code> → части по 4, 3, 3), и каждый воркер
+(поток / процесс / корутина) обрабатывает свою часть в цикле, вызывая
+<code>parse_and_save</code>. Загрузка: <code>requests</code> для threading/multiprocessing,
+<strong><code>aiohttp</code></strong> для async.</p>
+<p><strong>Сохранение в БД.</strong> Данные пишутся в <strong>ту же базу, что и в ЛР1</strong>
+(<code>hackathon_fastapi</code>), в отдельную таблицу <code>parsed_pages</code>
+(<code>id, url, title, approach, parsed_at</code>). Каждое сохранение открывает собственное
+короткоживущее соединение (<code>psycopg2</code>) — это безопасно и для потоков, и для процессов.</p>
+<p><strong>Результаты</strong> (10 страниц, 3 воркера; для контраста приведён последовательный замер):</p>
+<table>
+<thead>
+<tr>
+<th>Подход</th>
+<th>Замер 1</th>
+<th>Замер 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sequential (база)</td>
+<td>8.77 c</td>
+<td>—</td>
+</tr>
+<tr>
+<td>threading</td>
+<td>3.13 c</td>
+<td>4.29 c</td>
+</tr>
+<tr>
+<td>multiprocessing</td>
+<td>4.35 c</td>
+<td>4.32 c</td>
+</tr>
+<tr>
+<td>async</td>
+<td>5.89 c</td>
+<td>4.34 c</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Вывод по задаче 2:</strong> все три параллельных подхода примерно вдвое быстрее
+последовательного — парсинг I/O-bound, и пока один запрос ждёт ответ сети,
+выполняются другие. Ускорение ограничено числом воркеров (3 части вместо 10
+одновременных запросов). Разница между threading / multiprocessing / async
+невелика и во многом определяется «шумом» сети (поэтому приведено несколько
+замеров). При этом:</p>
+<ul>
+<li><strong>async (aiohttp)</strong> — самый лёгкий по ресурсам: тысячи запросов в одном потоке
+  без накладных расходов на потоки/процессы. Лучший выбор для массового I/O.</li>
+<li><strong>threading</strong> — почти так же быстр и проще в коде; отличный вариант для
+  умеренного числа запросов.</li>
+<li><strong>multiprocessing</strong> — тоже ускоряет, но избыточен для I/O: создание процессов
+  дороже, а на сетевых ожиданиях это преимущество не нужно.</li>
+</ul>
+<hr />
+<h2 id="_4">Итоговые выводы</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>CPU-bound (Задача 1)</th>
+<th>I/O-bound (Задача 2)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>threading</strong></td>
+<td>❌ нет ускорения (GIL)</td>
+<td>✅ ускоряет</td>
+</tr>
+<tr>
+<td><strong>multiprocessing</strong></td>
+<td>✅ лучший (реальный параллелизм)</td>
+<td>✅ ускоряет, но избыточен</td>
+</tr>
+<tr>
+<td><strong>asyncio</strong></td>
+<td>❌ нет ускорения</td>
+<td>✅ лучший (минимум накладных расходов)</td>
+</tr>
+</tbody>
+</table>
+<p>Главный практический вывод: <strong>выбор подхода зависит от типа нагрузки.</strong> Для
+вычислений (CPU-bound) нужен <code>multiprocessing</code>, обходящий GIL; для операций
+ввода-вывода (CPU-bound отдыхает, ждём сеть/диск) — <code>asyncio</code> или <code>threading</code>,
+которые дают конкурентность без затрат на отдельные процессы.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../lab1/endpoints/" class="btn btn-neutral float-left" title="Эндпоинты API"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../lab3/" class="btn btn-neutral float-right" title="Лабораторная 3">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026" class="fa fa-code-fork" style="color: #fcfcfc"> ITMO_ICT_WebDevelopment_tools_2025-2026</a>
+        </span>
+    
+    
+      <span><a href="../lab1/endpoints/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../lab3/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Лабораторная 3 - Средства веб-программирования — Макаров Егор</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u041b\u0430\u0431\u043e\u0440\u0430\u0442\u043e\u0440\u043d\u0430\u044f 3";
+        var mkdocs_page_input_path = "lab3/index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> Средства веб-программирования — Макаров Егор
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Главная</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Лабораторная 1</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../lab1/">Обзор</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../lab1/setup/">Установка и соединение с БД</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../lab1/models/">Модели (ORM)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../lab1/security/">Безопасность (JWT вручную)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../lab1/endpoints/">Эндпоинты API</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../lab2/">Лабораторная 2</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Лабораторная 3</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#_1">Архитектура</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_2">Структура проекта</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_3">Выполнение подзадач</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#1-docker">Подзадача 1 — упаковка в Docker</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#2-fastapi">Подзадача 2 — вызов парсера из FastAPI (синхронно)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#3">Подзадача 3 — вызов парсера через очередь (асинхронно)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_4">Запуск</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_5">Проверка (демонстрация)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_6">Итог</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">Средства веб-программирования — Макаров Егор</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Лабораторная 3</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026/edit/master/docs/lab3/index.md">Edit on ITMO_ICT_WebDevelopment_tools_2025-2026</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="3-docker">Лабораторная работа 3. Docker, источники данных и очереди</h1>
+<p><strong>Студент:</strong> Макаров Егор</p>
+<p><strong>Цель:</strong> упаковать FastAPI-приложение в Docker, интегрировать парсер данных с
+БД, вызывать парсер через API (синхронно) и через очередь задач (асинхронно).</p>
+<hr />
+<h2 id="_1">Архитектура</h2>
+<p>Система состоит из 5 контейнеров, поднимаемых одним <code>docker-compose.yml</code>:</p>
+<pre><code>                 ┌─────────────┐
+   клиент  ─────▶│   app       │  главное FastAPI-приложение (порт 8000)
+                 │ (FastAPI)   │
+                 └──┬───────┬──┘
+        HTTP /parse │       │ .delay()  (очередь)
+                    ▼       ▼
+              ┌─────────┐ ┌────────┐     ┌──────────┐
+              │ parser  │ │ redis  │◀───▶│  worker  │ Celery-воркер
+              │(FastAPI)│ │(брокер)│     │ (Celery) │
+              └────┬────┘ └────────┘     └────┬─────┘
+                   │                          │
+                   └──────────┬───────────────┘
+                              ▼
+                        ┌──────────┐
+                        │    db    │  PostgreSQL (как в ЛР1)
+                        └──────────┘
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Сервис</th>
+<th>Назначение</th>
+<th>Порт (хост)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>db</strong></td>
+<td>PostgreSQL (БД из ЛР1, таблица <code>parsed_pages</code>)</td>
+<td>5435</td>
+</tr>
+<tr>
+<td><strong>redis</strong></td>
+<td>брокер очереди и хранилище результатов Celery</td>
+<td>6381</td>
+</tr>
+<tr>
+<td><strong>parser</strong></td>
+<td>отдельный FastAPI-сервис парсера, эндпоинт <code>POST /parse</code></td>
+<td>8100</td>
+</tr>
+<tr>
+<td><strong>app</strong></td>
+<td>главное приложение: вызов парсера по HTTP + очередь</td>
+<td>8000</td>
+</tr>
+<tr>
+<td><strong>worker</strong></td>
+<td>Celery-воркер, выполняет задачи парсинга в фоне</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>Парсер (логика из ЛР2) и работа с БД вынесены в общий пакет <code>common/</code>, который
+используется и сервисом-парсером, и Celery-воркером.</p>
+<h2 id="_2">Структура проекта</h2>
+<pre><code>lab3/
+├── docker-compose.yml      # оркестрация 5 сервисов
+├── Dockerfile              # общий образ для app / parser / worker
+├── requirements.txt
+├── common/
+│   ├── db.py               # подключение к БД + таблица parsed_pages
+│   └── parser.py           # parse_and_save(url): загрузка, парсинг, сохранение
+├── parser_service/
+│   └── main.py             # FastAPI-парсер: POST /parse
+└── main_app/
+    ├── main.py             # эндпоинты /parse/sync, /parse/async, /parse/result
+    ├── celery_app.py       # конфигурация Celery (брокер/бэкенд = Redis)
+    └── tasks.py            # фоновая задача parse_url_task
+</code></pre>
+<hr />
+<h2 id="_3">Выполнение подзадач</h2>
+<h3 id="1-docker">Подзадача 1 — упаковка в Docker</h3>
+<ul>
+<li><strong>FastAPI-приложение</strong> (<code>main_app</code>), <strong>БД</strong> (сервис <code>db</code>, PostgreSQL как в ЛР1)
+  и <strong>парсер</strong> (<code>parser_service</code>, логика из ЛР2) упакованы в контейнеры.</li>
+<li><strong>Dockerfile</strong> — один общий образ: базовый <code>python:3.11-slim</code>, установка
+  зависимостей, копирование кода. Команда запуска задаётся в compose для каждого
+  сервиса.</li>
+<li><strong>docker-compose.yml</strong> — описывает все сервисы, порты, переменные окружения и
+  зависимости (<code>depends_on</code> с <code>healthcheck</code> у db и redis, чтобы приложения
+  стартовали только после готовности инфраструктуры).</li>
+<li><strong>Вызов парсера по HTTP</strong> — сервис <code>parser</code> предоставляет <code>POST /parse?url=...</code>.</li>
+</ul>
+<h3 id="2-fastapi">Подзадача 2 — вызов парсера из FastAPI (синхронно)</h3>
+<p>Эндпоинт <strong><code>POST /parse/sync?url=...</code></strong> главного приложения отправляет HTTP-запрос
+сервису-парсеру (в отдельном контейнере) через <code>httpx</code> и возвращает результат
+клиенту. См. <code>main_app/main.py::parse_sync</code>.</p>
+<h3 id="3">Подзадача 3 — вызов парсера через очередь (асинхронно)</h3>
+<ul>
+<li><strong>Celery + Redis</strong> подключены: Redis — брокер и хранилище результатов
+  (<code>main_app/celery_app.py</code>).</li>
+<li><strong>Задача</strong> <code>parse_url_task</code> (<code>main_app/tasks.py</code>) выполняет парсинг в фоне на
+  стороне воркера.</li>
+<li>Эндпоинт <strong><code>POST /parse/async?url=...</code></strong> ставит задачу в очередь (<code>.delay()</code>) и
+  сразу возвращает <code>task_id</code>, не блокируя клиента.</li>
+<li>Эндпоинт <strong><code>GET /parse/result/{task_id}</code></strong> возвращает статус и результат задачи.</li>
+<li>В <code>docker-compose.yml</code> добавлены сервисы <strong>redis</strong> и <strong>worker</strong>.</li>
+</ul>
+<hr />
+<h2 id="_4">Запуск</h2>
+<pre><code class="language-bash">cd lab3
+docker compose up --build -d      # собрать и поднять все контейнеры
+docker compose ps                 # проверить статусы
+docker compose logs -f worker     # смотреть, как Celery выполняет задачи
+docker compose down               # остановить (добавить -v чтобы удалить БД)
+</code></pre>
+<ul>
+<li>Главное приложение (Swagger): <a href="http://localhost:8000/docs">http://localhost:8000/docs</a></li>
+<li>Сервис-парсер (Swagger): <a href="http://localhost:8100/docs">http://localhost:8100/docs</a></li>
+</ul>
+<h2 id="_5">Проверка (демонстрация)</h2>
+<pre><code class="language-bash"># 1. Здоровье сервисов
+curl http://localhost:8000/
+curl http://localhost:8100/
+
+# 2. Синхронный вызов парсера (подзадача 2)
+curl -X POST &quot;http://localhost:8000/parse/sync?url=https://example.com&quot;
+
+# 3. Асинхронный вызов через очередь (подзадача 3)
+curl -X POST &quot;http://localhost:8000/parse/async?url=https://www.python.org&quot;
+# -&gt; {&quot;message&quot;:&quot;Task queued&quot;,&quot;task_id&quot;:&quot;&lt;ID&gt;&quot;}
+
+# 4. Результат фоновой задачи
+curl &quot;http://localhost:8000/parse/result/&lt;ID&gt;&quot;
+# -&gt; {&quot;status&quot;:&quot;SUCCESS&quot;,&quot;result&quot;:{&quot;title&quot;:&quot;Welcome to Python.org&quot;,...}}
+
+# 5. Данные в БД
+docker compose exec db psql -U postgres -d hackathon_fastapi \
+  -c &quot;SELECT id, title, approach FROM parsed_pages ORDER BY id;&quot;
+</code></pre>
+<p><strong>Пример результата</strong> (поле <code>approach</code> показывает путь вызова — <code>http</code> синхронно
+через сервис-парсер, <code>celery</code> через очередь):</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>title</th>
+<th>approach</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Example Domain</td>
+<td>http</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Welcome to Python.org</td>
+<td>celery</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="_6">Итог</h2>
+<p>Реализованы все три подзадачи: приложение, БД и парсер упакованы в Docker и
+управляются через <code>docker-compose</code>; парсер вызывается из FastAPI синхронно по
+HTTP (отдельный контейнер) и асинхронно через очередь Celery с брокером Redis и
+отдельным воркером. Результаты парсинга сохраняются в БД из ЛР1.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../lab2/" class="btn btn-neutral float-left" title="Лабораторная 2"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026" class="fa fa-code-fork" style="color: #fcfcfc"> ITMO_ICT_WebDevelopment_tools_2025-2026</a>
+        </span>
+    
+    
+      <span><a href="../lab2/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
