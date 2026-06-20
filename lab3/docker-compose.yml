@@ -1,0 +1,76 @@
+services:
+  # --- База данных (как в ЛР1) ---
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hackathon_fastapi
+    ports:
+      - "5435:5432"          # 5435 на хосте, чтобы не конфликтовать с локальным Postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  # --- Брокер очереди (Celery) ---
+  redis:
+    image: redis:7
+    ports:
+      - "6381:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  # --- Сервис-парсер (отдельный контейнер) ---
+  parser:
+    build: .
+    command: uvicorn parser_service.main:app --host 0.0.0.0 --port 8100
+    environment:
+      DB_DSN: postgresql://postgres:postgres@db:5432/hackathon_fastapi
+    ports:
+      - "8100:8100"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # --- Главное приложение (вызов парсера по HTTP + очередь) ---
+  app:
+    build: .
+    command: uvicorn main_app.main:app --host 0.0.0.0 --port 8000
+    environment:
+      DB_DSN: postgresql://postgres:postgres@db:5432/hackathon_fastapi
+      PARSER_URL: http://parser:8100
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      parser:
+        condition: service_started
+
+  # --- Celery worker (фоновая обработка задач) ---
+  worker:
+    build: .
+    command: celery -A main_app.celery_app.celery worker --loglevel=info
+    environment:
+      DB_DSN: postgresql://postgres:postgres@db:5432/hackathon_fastapi
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  pgdata:
