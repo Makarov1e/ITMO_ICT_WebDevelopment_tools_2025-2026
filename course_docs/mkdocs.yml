@@ -1,0 +1,20 @@
+site_name: Средства веб-программирования — Макаров Егор
+site_description: Отчёты по лабораторным работам (FastAPI, конкурентность, Docker)
+repo_url: https://github.com/Makarov1e/ITMO_ICT_WebDevelopment_tools_2025-2026
+repo_name: ITMO_ICT_WebDevelopment_tools_2025-2026
+docs_dir: docs
+
+theme:
+  name: readthedocs
+  highlightjs: true
+
+nav:
+  - Главная: index.md
+  - Лабораторная 1:
+      - Обзор: lab1/index.md
+      - Установка и соединение с БД: lab1/setup.md
+      - Модели (ORM): lab1/models.md
+      - Безопасность (JWT вручную): lab1/security.md
+      - Эндпоинты API: lab1/endpoints.md
+  - Лабораторная 2: lab2/index.md
+  - Лабораторная 3: lab3/index.md
